@@ -15,7 +15,7 @@
     "build": "gulp build",
     "test": "NODE_ENV=development gulp test",
     "clean": "gulp clean",
-    "prepublish": "gulp build"
+    "prepare": "gulp build"
   },
   "publishConfig": {
     "access": "public"
