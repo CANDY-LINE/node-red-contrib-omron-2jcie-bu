@@ -38,7 +38,7 @@ export default function(RED) {
           }
           case 'chart': {
             result = Object.keys(output.data || {}).map(k => {
-              if (typeof output.data[k] !== 'number') {
+              if (k === 'id' || typeof output.data[k] !== 'number') {
                 return null;
               }
               return {
