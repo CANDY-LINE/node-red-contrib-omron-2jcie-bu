@@ -121,7 +121,8 @@ export default function(RED) {
               throw new Error(`Unknown command: ${topic}`);
             }
           }
-          this.send(packet);
+          msg.payload = packet;
+          this.send(msg);
         } catch (e) {
           this.error(e);
         }
