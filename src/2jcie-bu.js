@@ -25,7 +25,7 @@ export default function(RED) {
       RED.nodes.createNode(this, n);
       this.name = n.name;
       this.messageFormat = n.messageFormat || 'standard';
-      this.parser = new Omron2jcieBuPacketParser();
+      this.parser = new Omron2jcieBuPacketParser(n.ttl || 10000);
       const formatMessage = (input, output, msg, timestamp) => {
         let result;
         switch (this.messageFormat) {
@@ -60,29 +60,31 @@ export default function(RED) {
           const now = new Date().toISOString();
           const input = msg.payload;
           const output = this.parser.parseResponse(input);
-          switch (output.address) {
-            case 0x5021: {
-              msg.topic = 'getLatestSensorData';
-              break;
+          if (output.finished) {
+            switch (output.address) {
+              case 0x5021: {
+                msg.topic = 'getLatestSensorData';
+                break;
+              }
+              case 0x5402: {
+                msg.topic = 'getMountingOrientation';
+                break;
+              }
+              case 0x180A: {
+                msg.topic = 'getDeviceInformation';
+                break;
+              }
+              case 0x5111: {
+                msg.topic = 'setLED';
+                break;
+              }
+              default: {}
             }
-            case 0x5402: {
-              msg.topic = 'getMountingOrientation';
-              break;
-            }
-            case 0x180A: {
-              msg.topic = 'getDeviceInformation';
-              break;
-            }
-            case 0x5111: {
-              msg.topic = 'setLED';
-              break;
-            }
-            default: {}
+            const result = formatMessage(input, output, msg, now);
+            result.forEach(r => {
+              this.send(r);
+            });
           }
-          const result = formatMessage(input, output, msg, now);
-          result.forEach(r => {
-            this.send(r);
-          });
         } catch (e) {
           this.error(e);
         }

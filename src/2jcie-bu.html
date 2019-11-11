@@ -16,6 +16,13 @@
       <option value='chart' data-i18n='2jcie-bu.messageFormat.chart'></option>
     </select>
   </div>
+  <div class='form-row'>
+    <label for='node-input-ttl'>
+      <i class='fa fa-tag'></i>
+      <span data-i18n='2jcie-bu.label.ttl'></span>
+    </label>
+    <input type='text' id='node-input-ttl' data-i18n='[placeholder]2jcie-bu.placeholder.ttl'>
+  </div>
 </script>
 
 <script type="text/x-red" data-template-name="2JCIE-BU out">
@@ -36,6 +43,7 @@
       defaults:{
         name: { value: "" },
         messageFormat:{ value: "standard" },
+        ttl:{ value: "10000" },
       },
       inputs: 1,
       outputs: 1,

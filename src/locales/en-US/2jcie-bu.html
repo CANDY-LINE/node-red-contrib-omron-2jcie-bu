@@ -12,6 +12,10 @@
 <p>
   This node expects a <code>raw</code> data frame in <code>msg.payload</code>,
   which is usually output by <i>serial in</i> node.
+  <i>serial in</i> node occasionally emits the separated buffer message corresponding to
+  a single command request. In such case, this node handles appropriately but
+  it has TTL to retain the seprated message. You can change the value in <code>Input Buffer TTL</code>
+  item in the configuration dialog. Default TTL is 10 sec.
 </p>
 <dl class="message-properties">
 <dt>payload<span class="property-type">Buffer</span></dt>
