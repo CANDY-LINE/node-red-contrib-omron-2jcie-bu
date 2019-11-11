@@ -8,6 +8,18 @@
   Read <i>2JCIE-BU out</i> help content for detail.
 </p>
 
+<h3>2JCIE-BU USB Serial Port Requirements</h3>
+<p>
+  This node requires a <i>serial in</i> node with the following serial port configuration.
+  <ul>
+    <li>Choose Serial Port (typically <code>/dev/ttyUSB0</code>)</li>
+    <li>Set 115200 for Baud Rate</li>
+    <li>Choose <code>after a timeout of</code> input-split condition (timeout mode)</li>
+    <li>Choose <code>binary buffers</code> for the delivery type</li>
+    <li>Leave default timeout to 10 sec (10000ms)</li>
+  </ul>
+</p>
+
 <h3>Inputs</h3>
 <p>
   This node expects a <code>raw</code> data frame in <code>msg.payload</code>,
@@ -188,6 +200,18 @@ You can choose the output message format from the following alternatives.
   Translates a command message into a raw packet for OMRON 2JCIE-BU sensor device.
   It is expected to be used in conjunction with <i>serial out</i> node as it doesn't have any function to directly access the USB serial port.
   In order to receive a command response message, use <i>2JCIE-BU in</i> node.
+</p>
+
+<h3>2JCIE-BU USB Serial Port Requirements</h3>
+<p>
+  This node requires a <i>serial out</i> node with the following serial port configuration.
+  <ul>
+    <li>Choose Serial Port (typically <code>/dev/ttyUSB0</code>)</li>
+    <li>Set 115200 for Baud Rate</li>
+    <li>Choose <code>after a timeout of</code> input-split condition (timeout mode)</li>
+    <li>Choose <code>binary buffers</code> for the delivery type</li>
+    <li>Leave default timeout to 10 sec (10000ms)</li>
+  </ul>
 </p>
 
 <h3>Inputs</h3>
