@@ -1,0 +1,10 @@
+# Message Resources for English (fallback language)
+2jcie-bu:
+  label:
+    messageFormat: Output
+    ttl: Input Buffer TTL
+  messageFormat:
+    standard: Standard Single Message
+    chart: Dashboard Charts Messages
+  placeholder:
+    ttl: Buffer TTL in millisec.

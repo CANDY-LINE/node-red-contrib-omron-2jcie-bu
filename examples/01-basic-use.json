@@ -1,0 +1,181 @@
+[
+    {
+        "id": "7749888c.f75d",
+        "type": "tab",
+        "label": "2JCIE-BU example",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "37d77db0.dca38a",
+        "type": "2JCIE-BU in",
+        "z": "7749888c.f75d",
+        "name": "",
+        "messageFormat": "standard",
+        "x": 270,
+        "y": 500,
+        "wires": [
+            [
+                "b6e2b1.1a283d5"
+            ]
+        ]
+    },
+    {
+        "id": "6d65bf9.44c124",
+        "type": "2JCIE-BU out",
+        "z": "7749888c.f75d",
+        "name": "",
+        "x": 460,
+        "y": 240,
+        "wires": [
+            [
+                "81d013b1.20c21"
+            ]
+        ]
+    },
+    {
+        "id": "8e7d04ce.bf3af8",
+        "type": "serial in",
+        "z": "7749888c.f75d",
+        "x": 130,
+        "y": 440,
+        "wires": [
+            [
+                "37d77db0.dca38a"
+            ]
+        ]
+    },
+    {
+        "id": "b6e2b1.1a283d5",
+        "type": "debug",
+        "z": "7749888c.f75d",
+        "name": "Dump command response message",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 430,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "81d013b1.20c21",
+        "type": "serial out",
+        "z": "7749888c.f75d",
+        "x": 510,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "d22531e0.b586a8",
+        "type": "inject",
+        "z": "7749888c.f75d",
+        "name": "",
+        "topic": "getLatestSensorData",
+        "payload": "",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 160,
+        "y": 120,
+        "wires": [
+            [
+                "6d65bf9.44c124"
+            ]
+        ]
+    },
+    {
+        "id": "16ec33df.91483c",
+        "type": "inject",
+        "z": "7749888c.f75d",
+        "name": "",
+        "topic": "getMountingOrientation",
+        "payload": "",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 170,
+        "y": 180,
+        "wires": [
+            [
+                "6d65bf9.44c124"
+            ]
+        ]
+    },
+    {
+        "id": "b132286.29adc58",
+        "type": "inject",
+        "z": "7749888c.f75d",
+        "name": "",
+        "topic": "getDeviceInformation",
+        "payload": "",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 160,
+        "y": 240,
+        "wires": [
+            [
+                "6d65bf9.44c124"
+            ]
+        ]
+    },
+    {
+        "id": "910fd720.c3183",
+        "type": "inject",
+        "z": "7749888c.f75d",
+        "name": "set LED Color (Light Blue)",
+        "topic": "setLED",
+        "payload": "{\"displayRule\":\"ON\",\"color\":\"#5899f3\"}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 170,
+        "y": 300,
+        "wires": [
+            [
+                "6d65bf9.44c124"
+            ]
+        ]
+    },
+    {
+        "id": "a2113dd4.d0df9",
+        "type": "inject",
+        "z": "7749888c.f75d",
+        "name": "set LED Color Rule (Temperature)",
+        "topic": "setLED",
+        "payload": "{\"displayRule\":\"Temperature\"}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 190,
+        "y": 360,
+        "wires": [
+            [
+                "6d65bf9.44c124"
+            ]
+        ]
+    },
+    {
+        "id": "c433be75.bb7a58",
+        "type": "comment",
+        "z": "7749888c.f75d",
+        "name": "Configure a serial config node prior to start this flow!",
+        "info": "### How to set up the example flow\n\n1. Add or choose a serial port in the `serial in` node and the `serial out` node (You have to set the same serial port for the both nodes)\n2. Deploy the flow.\n3. Click/tap an iject node and a response message object will appear on a debug tab.",
+        "x": 250,
+        "y": 60,
+        "wires": []
+    }
+]

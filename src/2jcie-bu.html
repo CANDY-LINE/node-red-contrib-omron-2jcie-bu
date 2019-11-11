@@ -1,0 +1,80 @@
+<script type="text/x-red" data-template-name="2JCIE-BU in">
+  <div class='form-row'>
+    <label for='node-input-name'>
+      <i class='fa fa-tag'></i>
+      <span data-i18n='node-red:common.label.name'></span>
+    </label>
+    <input type='text' id='node-input-name' data-i18n='[placeholder]node-red:common.label.name'>
+  </div>
+  <div class='form-row'>
+    <label for='node-input-messageFormat'>
+      <i class='fa fa-feed'></i>
+      <span data-i18n='2jcie-bu.label.messageFormat'></span>
+    </label>
+    <select type='text' id='node-input-messageFormat' style='width: 70%;'>
+      <option value='standard' data-i18n='2jcie-bu.messageFormat.standard'></option>
+      <option value='chart' data-i18n='2jcie-bu.messageFormat.chart'></option>
+    </select>
+  </div>
+  <div class='form-row'>
+    <label for='node-input-ttl'>
+      <i class='fa fa-tag'></i>
+      <span data-i18n='2jcie-bu.label.ttl'></span>
+    </label>
+    <input type='text' id='node-input-ttl' data-i18n='[placeholder]2jcie-bu.placeholder.ttl'>
+  </div>
+</script>
+
+<script type="text/x-red" data-template-name="2JCIE-BU out">
+  <div class='form-row'>
+    <label for='node-input-name'>
+      <i class='fa fa-tag'></i>
+      <span data-i18n='node-red:common.label.name'></span>
+    </label>
+    <input type='text' id='node-input-name' data-i18n='[placeholder]node-red:common.label.name'>
+  </div>
+</script>
+
+<script type="text/javascript">
+  RED.nodes.registerType("2JCIE-BU in",
+    {
+      category:"OMRON",
+      color:"#5899f3",
+      defaults:{
+        name: { value: "" },
+        messageFormat:{ value: "standard" },
+        ttl:{ value: "10000" },
+      },
+      inputs: 1,
+      outputs: 1,
+      icon: "font-awesome/fa-microchip",
+      align: "left",
+      label:function(){
+        return this.name || "2JCIE-BU in"
+      },
+      labelStyle:function(){
+        return this.name ? "node_label_italic" : ""
+      }
+    }
+  );
+
+  RED.nodes.registerType("2JCIE-BU out",
+    {
+      category:"OMRON",
+      color:"#5899f3",
+      defaults:{
+        name: { value: "" },
+      },
+      inputs: 1,
+      outputs: 1,
+      icon: "font-awesome/fa-microchip",
+      align: "right",
+      label:function(){
+        return this.name || "2JCIE-BU out"
+      },
+      labelStyle:function(){
+        return this.name ? "node_label_italic" : ""
+      }
+    }
+  );
+</script>

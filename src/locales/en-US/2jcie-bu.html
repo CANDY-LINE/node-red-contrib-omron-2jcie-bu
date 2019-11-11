@@ -1,0 +1,280 @@
+<script type="text/x-red" data-help-name="2JCIE-BU in">
+<p>
+  Translates a raw packet data sent by OMRON 2JCIE-BU sensor device into a user-friendly message object.
+  It is expected to be used in conjunction with <i>serial in</i> node as it doesn't have any function to directly access the USB serial port.
+  OMRON 2JCIE-BU sensor device expects Request-Resppnse style message communication.
+  In order to receive a message from the sensor device, you have to send a command request message
+  with <i>2JCIE-BU out</i> node and <i>serial out</i> node.
+  Read <i>2JCIE-BU out</i> help content for detail.
+</p>
+
+<h3>2JCIE-BU USB Serial Port Requirements</h3>
+<p>
+  This node requires a <i>serial in</i> node with the following serial port configuration.
+  <ul>
+    <li>Choose Serial Port (typically <code>/dev/ttyUSB0</code>)</li>
+    <li>Set 115200 for Baud Rate</li>
+    <li>Choose <code>after a timeout of</code> input-split condition (timeout mode)</li>
+    <li>Choose <code>binary buffers</code> for the delivery type</li>
+    <li>Leave default timeout to 10 sec (10000ms)</li>
+  </ul>
+</p>
+
+<h3>Inputs</h3>
+<p>
+  This node expects a <code>raw</code> data frame in <code>msg.payload</code>,
+  which is usually output by <i>serial in</i> node.
+  <i>serial in</i> node occasionally emits the separated buffer message corresponding to
+  a single command request. In such case, this node handles appropriately but
+  it has TTL to retain the seprated message. You can change the value in <code>Input Buffer TTL</code>
+  item in the configuration dialog. Default TTL is 10 sec.
+</p>
+<dl class="message-properties">
+<dt>payload<span class="property-type">Buffer</span></dt>
+<dd>
+  2JCIE-BU raw data frame sent via a serial port.
+</dd>
+</dl>
+
+<h3>Outputs</h3>
+<p>
+This node emits a message containing in response to a requested command with <i>2JCIE-BU out</i> node and <i>serial out</i> node.
+You can choose the output message format from the following alternatives.
+<ul>
+  <li><code>Standard Single Message</code>,
+    which is a single message object with all sensor data information.</li>
+  <li><code>Dashboard Chart Messages</code>,
+    which are a series of message object divided into each sensor data type
+    and are applicable for <i>chart</i> node to draw chart</li>
+    <code>Notice: Applied for only numeric sensor values. Non-numeric values are silently discarded in this format.</code>
+</ul>
+</p>
+
+<h4>Standard Single Message</h4>
+<p>
+  The sensor data information is assigned to <code>payload</code> property in a message object.
+  The requested command is set to <code>topic</code> property.
+  The <code>payload</code> property value has the following structure.
+</p>
+<dl class="message-properties">
+<dt>status<span class="property-type">string</span></dt>
+<dd>
+  Command status text.
+  <dl>
+    <dt>Read OK</dt>
+    <dd>When either <code>getLatestSensorData</code>, <code>getMountingOrientation</code> or <code>getDeviceInformation</code> command is successful.</dd>
+    <dt>Write OK</dt>
+    <dd>When <code>setLED</code> command is successful.</dd>
+    <dt>Read Error</dt>
+    <dd>When either <code>getLatestSensorData</code>, <code>getMountingOrientation</code> or <code>getDeviceInformation</code> command is failure.</dd>
+    <dt>Write Error</dt>
+    <dd>When <code>setLED</code> command is failure.</dd>
+    <dt>Unknown</dt>
+    <dd>Unknown error</dd>
+  </dl>
+</dd>
+<dt>statusCode<span class="property-type">int</span></dt>
+<dd>
+  Command status code.
+  <dl>
+    <dt>0x01</dt>
+    <dd>When either <code>getLatestSensorData</code>, <code>getMountingOrientation</code> or <code>getDeviceInformation</code> command is successful.</dd>
+    <dt>0x02</dt>
+    <dd>When <code>setLED</code> command is successful.</dd>
+    <dt>0x81 (129)</dt>
+    <dd>When either <code>getLatestSensorData</code>, <code>getMountingOrientation</code> or <code>getDeviceInformation</code> command is failure.</dd>
+    <dt>0x82 (130)</dt>
+    <dd>When <code>setLED</code> command is failure.</dd>
+    <dt>0xFF (255)</dt>
+    <dd>Unknown error</dd>
+  </dl>
+</dd>
+<dt>address<span class="property-type">int</span></dt>
+<dd>
+  <code>data</code> property value object structure type.
+  <dl>
+    <dt>0x5021 (20513)</dt>
+    <dd><code>getLatestSensorData</code> response data format.</dd>
+    <dt>0x5402 (21506)</dt>
+    <dd><code>getMountingOrientation</code> response data format.</dd>
+    <dt>0x180A (6154)</dt>
+    <dd><code>getDeviceInformation</code> response data format.</dd>
+    <dt>0x5111 (20753)</dt>
+    <dd>No <code>data</code> property for <code>setLED</code> response.</dd>
+  </dl>
+</dd>
+<dt>data<span class="property-type">object</span></dt>
+<dd>
+  A key-value set containing sensor data and/or information.
+  <dl>
+    <dt><code>getLatestSensorData</code> command response data object key-value set</dt>
+    <dd>
+      <dl>
+        <dt>id</dt>
+        <dd>Sequence number.</dd>
+        <dt>temperature</dt>
+        <dd>Temperature value in <i>degree Celcius</i>.</dd>
+        <dt>humidity</dt>
+        <dd>Humidity value in <i>%</i>.</dd>
+        <dt>illuminance</dt>
+        <dd>Illuminance value in <i>lux</i>.</dd>
+        <dt>barometicPressure</dt>
+        <dd>Barometric Pressure value in <i>hPa</i>.</dd>
+        <dt>soundNoise</dt>
+        <dd>Sound Noise value in <i>dB</i>.</dd>
+        <dt>etvoc</dt>
+        <dd>equivalent Total Volatile Organic Compounds value in <i>ppb</i>.</dd>
+        <dt>eco2</dt>
+        <dd>equivalent CO2 in <i>ppm</i>.</dd>
+        <dt>discomfortIndex</dt>
+        <dd>Discomfort Index (DI, Temperature-Humidity Index) in <i>DI</i>.</dd>
+        <dt>heatStroke</dt>
+        <dd>Heat Stroke value in <i>degree Celcius</i>.</dd>
+        <dt>vibrationStatus</dt>
+        <dd>Vibration Status (either <code>None</code>, <code>Vibration Detected</code>, or <code>Earthquake Detected</code>).</dd>
+        <dt>spectralIntensity</dt>
+        <dd>Spectral Intensity Value (for small to medium scale vibration) in <i>cm/s</i>(=<i>kine</i>).</dd>
+        <dt>seismicIntensity</dt>
+        <dd>Seismic Intensity Scale of Japan (for larger scale vibration like earthquake, no unit).</dd>
+      </dl>
+    </dd>
+    <dt><code>getMountingOrientation</code> command response data object key-value set</dt>
+    <dd>
+      <dl>
+        <dt>position</dt>
+        <dd>
+          1 to 6 int value. See [Readme](https://github.com/CANDY-LINE/node-red-contrib-omron-2jcie-bu#readme) for detail.
+        </dd>
+      </dl>
+    </dd>
+    <dt><code>getDeviceInformation</code> command response data object key-value set</dt>
+    <dd>
+      <dl>
+        <dt>model</dt>
+        <dd>Always <code>2JCIE-BU01</code>.</dd>
+        <dt>serialNumber</dt>
+        <dd>Device Serial Nummber.</dd>
+        <dt>firmwareVersion</dt>
+        <dd>Device Firmware Version.</dd>
+        <dt>hardwareVersion</dt>
+        <dd>Device Hardware Version.</dd>
+        <dt>manufacturer</dt>
+        <dd>Always <code>OMRON</code>.</dd>
+      </dl>
+    </dd>
+    <dt><code>setLED</code> command response data object key-value set</dt>
+    <dd>
+      Nothing (<code>null</code> or <code>undefined</code>).
+    </dd>
+  </dl>
+</dd>
+<dt>timestamp<span class="property-type">string</span></dt>
+<dd>
+  Timestamp in ISO8601 date/time format (e.g. `2019-11-07T08:40:06.409Z`)
+</dd>
+</dl>
+
+<h4>Dashboard Chart Messages</h4>
+<p>
+  This format allows the node to emit multiple messages per sensing data, 1 message object for 1 sensing data.
+  2JCIE-BUS has 8 sensing capabilities so the node will emit 8 messages when receiving a single input message.
+</p>
+<dl class="message-properties">
+<dt>topic<span class="property-type">string</span></dt>
+<dd>
+  Type of the sensing data.
+</dd>
+<dt>payload<span class="property-type">int|float|string</span></dt>
+<dd>
+  Value of the sensing data.
+</dd>
+<dt>timestamp<span class="property-type">string</span></dt>
+<dd>
+  Timestamp text in ISO8601 format.
+</dd>
+</dl>
+</script>
+
+<script type="text/x-red" data-help-name="2JCIE-BU out">
+<p>
+  Translates a command message into a raw packet for OMRON 2JCIE-BU sensor device.
+  It is expected to be used in conjunction with <i>serial out</i> node as it doesn't have any function to directly access the USB serial port.
+  In order to receive a command response message, use <i>2JCIE-BU in</i> node.
+</p>
+
+<h3>2JCIE-BU USB Serial Port Requirements</h3>
+<p>
+  This node requires a <i>serial out</i> node with the following serial port configuration.
+  <ul>
+    <li>Choose Serial Port (typically <code>/dev/ttyUSB0</code>)</li>
+    <li>Set 115200 for Baud Rate</li>
+    <li>Choose <code>after a timeout of</code> input-split condition (timeout mode)</li>
+    <li>Choose <code>binary buffers</code> for the delivery type</li>
+    <li>Leave default timeout to 10 sec (10000ms)</li>
+  </ul>
+</p>
+
+<h3>Inputs</h3>
+<p>
+  This node expects a command message object. You can specify the command name in <code>msg.topic</code> property.
+</p>
+<dl class="message-properties">
+  <dt>topic<span class="property-type">string</span></dt>
+  <dd>
+    One of the following command names.
+    <dl>
+      <dt><code>getLatestSensorData</code></dt>
+      <dd>This command allowed you to get all sensor data information except the mounting position.</dd>
+      <dt><code>getMountingOrientation</code></dt>
+      <dd>This command allowed you to get the mounting position.</dd>
+      <dt><code>getDeviceInformation</code></dt>
+      <dd>This command allowed you to get the sensor device information.</dd>
+      <dt><code>setLED</code></dt>
+      <dd>
+        This command allowed you to set the LED color or the LED color display rule.<br />
+        With this topic, you have to provide an object in <code>msg.payload</code>. See below.
+      </dd>
+    </dl>
+  </dd>
+  <dt>payload<span class="property-type">object</span></dt>
+  <dd>
+    This propery is used only when <code>msg.topic</code> is <code>setLED</code>.
+    <dl class="message-properties">
+      <dt>displayRule<span class="property-type">string</span></dt>
+      <dd>
+        Set one of the following text (Notice! These are case sensitive).
+        <dl>
+          <dt><code>OFF</code></dt>
+          <dd>Turn off the LED.</dd>
+          <dt><code>ON</code></dt>
+          <dd>Turn on the LED with the color given via <code>msg.payload.color</code> property.</dd>
+          <dt><code>Temperature</code></dt>
+          <dd>The sensor device will change the color depending on the current temperature.</dd>
+          <dt><code>Humidity</code></dt>
+          <dd>The sensor device will change the color depending on the current humidity.</dd>
+          <dt><code>Illuminance</code></dt>
+          <dd>The sensor device will change the color depending on the current illuminance.</dd>
+          <dt><code>Barometic Pressure</code></dt>
+          <dd>The sensor device will change the color depending on the current barometic pressure.</dd>
+          <dt><code>Sound Noise</code></dt>
+          <dd>The sensor device will change the color depending on the current sound noise.</dd>
+          <dt><code>eTVOC</code></dt>
+          <dd>The sensor device will change the color depending on the current eTVOC.</dd>
+          <dt><code>Vibration</code></dt>
+          <dd>The sensor device will change the color depending on the current vibration.</dd>
+        </dl>
+      </dd>
+      <dt>color<span class="property-type">string</span></dt>
+      <dd>
+        Hex color string. e.g. <code>00ff00</code> or <code>#00ff00</code><br />
+        Required when <code>msg.payload.displayRule</code> is <code>ON</code>.
+      </dd>
+    </dl>
+  </dd>
+</dl>
+
+<h3>Outputs</h3>
+<p>
+This node emits a message containing a Buffer object in <code>msg.payload</code>.
+</p>
+</script>

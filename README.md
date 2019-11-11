@@ -45,7 +45,13 @@ Let's visit the [product page](https://www.components.omron.com/product-detail?p
 
 The bundled example flow provides the following demonstrations:
 
-- TBW
+- `getLatestSensorData` inject node to send `getLatestSensorData` command
+- `getMountingOrientation` inject node to send `getMountingOrientation` command
+- `getMountingOrientation` inject node to send `getMountingOrientation` command
+- `set LED Color (Light Blue)` inject node to send `setLED` command with Light Blue color number
+- `set LED Color Rule (Temperature)` inject node to send `setLED` command with Temperature display rule
+
+All outputs are shown on the debug tab.
 
 # Prerequisites
 
@@ -69,6 +75,7 @@ The following node is required to send/receive data packets via USB serial.
 In order to use OMRON 2JCIE-BU, you might need some work as described below.
 
 1. Add Product ID and Vendor ID to the FTDI Driver
+1. Configure the `serial port` config node
 
 ### Add Product ID and Vendor ID to the FTDI Driver
 
@@ -81,6 +88,18 @@ $ sudo modprobe ftdi_sio
 $ sudo chmod 777 /sys/bus/usb-serial/drivers/ftdi_sio/new_id
 $ sudo echo 0590 00d4 > /sys/bus/usb-serial/drivers/ftdi_sio/new_id
 ```
+
+### Configure the `serial port` config node
+
+After starting your Node-RED, configure `serial port` config node.
+
+- Choose Serial Port (typically `/dev/ttyUSB0`)
+- Set 115200 for Baud Rate
+- Choose `after a timeout of` input-split condition (timeout mode)
+- Choose `binary buffers` for the delivery type
+- Leave default timeout to 10 sec (10000ms)
+
+![Serialport Config](images/serialport-config.png)
 
 # How to install
 

@@ -1,0 +1,15 @@
+.git
+node_modules
+images
+src
+tests
+.gitignore
+.npmignore
+.jshintrc
+.travis.yml
+gulpfile.js
+*.tgz
+*.log
+.node-version
+*.test.js
+*.test.js.map
