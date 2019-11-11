@@ -36,24 +36,35 @@ describe('Omron2jcieBuPacketParser', () => {
 				'5242060081215001237A',
 				'hex'
 			));
-			console.log(output);
-			assert.equal('Read Error', output.status);
-			assert.equal(0x81, output.statusCode);
-			assert.equal(0x5021, output.address);
-			assert.equal('CRC Error', output.error);
-			assert.equal(0x01, output.errorCode);
+			assert.equal(output.status, 'Read Error');
+			assert.equal(output.statusCode, 0x81);
+			assert.equal(output.address, 0x5021);
+			assert.equal(output.error, 'CRC Error');
+			assert.equal(output.errorCode, 0x01);
     });
     it('should parse the error data packet from 2JCIE-BU in response to "Write" request', async () => {
 			const output = await parser.parseResponse(Buffer.from(
 				'5242060082215001233E',
 				'hex'
 			));
+			assert.equal(output.status, 'Write Error');
+			assert.equal(output.statusCode, 0x82);
+			assert.equal(output.address, 0x5021);
+			assert.equal(output.error, 'CRC Error');
+			assert.equal(output.errorCode, 0x01);
+    });
+
+		it('should parse the long sensor data packet from 2JCIE-BU in response to "Read" request', async () => {
+			const output = await parser.parseResponse(Buffer.from(
+				'524236000121503729075c1d5b00fe4b0f004d1c000090010319670700000000000000000000000000000000000000000000000000000000d632',
+				'hex'
+			));
 			console.log(output);
-			assert.equal('Write Error', output.status);
-			assert.equal(0x82, output.statusCode);
-			assert.equal(0x5021, output.address);
-			assert.equal('CRC Error', output.error);
-			assert.equal(0x01, output.errorCode);
+			assert.equal(output.status, 'Read OK');
+			assert.equal(output.statusCode, 0x01);
+			assert.equal(output.address, 0x5021);
+			assert.closeTo(output.data.temperature, 18.33, 0.01);
+			assert.equal(output.data.eco2, 400);
     });
   });
 });
@@ -71,19 +82,19 @@ describe('Omron2jcieBuPacketBuilder', () => {
   describe('#buildReadLatestDataLongRequest()', () => {
     it('should build a Read-Latest-Data-Long request', async () => {
 			const output = await builder.buildReadLatestDataLongRequest();
-			assert.equal('52420500012150e24b', output.toString('hex'));
+			assert.equal(output.toString('hex'), '52420500012150e24b');
     });
   });
 	describe('#buildReadMountingOrientationRequest()', () => {
     it('should build a Read-Mounting-Orientation request', async () => {
 			const output = await builder.buildReadMountingOrientationRequest();
-			assert.equal('52420500010254fab8', output.toString('hex'));
+			assert.equal(output.toString('hex'), '52420500010254fab8');
     });
   });
 	describe('#buildReadDeviceInformationRequest()', () => {
     it('should build a Read-Device-Information request', async () => {
 			const output = await builder.buildReadDeviceInformationRequest();
-			assert.equal('52420500010a18fc8d', output.toString('hex'));
+			assert.equal(output.toString('hex'), '52420500010a18fc8d');
     });
   });
 	describe('#buildWriteLEDSettingsRequest()', () => {
@@ -91,7 +102,7 @@ describe('Omron2jcieBuPacketBuilder', () => {
 			const output = await builder.buildWriteLEDSettingsRequest({
 				displayRule: 'Temperature'
 			});
-			assert.equal('52420a000211510200000000d7c5', output.toString('hex'));
+			assert.equal(output.toString('hex'), '52420a000211510200000000d7c5');
     });
 
 		it('should build a Write-LED-Setting request with the rule: "ON"', async () => {
@@ -99,7 +110,7 @@ describe('Omron2jcieBuPacketBuilder', () => {
 				displayRule: 'ON',
 				color: '#0D58C1'
 			});
-			assert.equal('52420a0002115101000d58c1f856', output.toString('hex'));
+			assert.equal(output.toString('hex'), '52420a0002115101000d58c1f856');
     });
   });
 });
