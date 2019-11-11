@@ -228,29 +228,29 @@ export class Omron2jcieBuPacketParser {
     // Sequence number
     data.id = payloadBuf.readUInt8(3);
     // Temperature (degree Celsius)
-    data.temperature = payloadBuf.readSInt16LE(4) / 100;
+    data.temperature = payloadBuf.readInt16LE(4) / 100;
     // Humidity (%)
-    data.humidity = payloadBuf.readSInt16LE(6) / 100;
+    data.humidity = payloadBuf.readInt16LE(6) / 100;
     // Illuminance (lux)
-    data.illuminance = payloadBuf.readSInt16LE(8);
+    data.illuminance = payloadBuf.readInt16LE(8);
     // Barometric Pressure (hPa)
-    data.barometicPressure = payloadBuf.readSInt32LE(10) / 1000;
+    data.barometicPressure = payloadBuf.readInt32LE(10) / 1000;
     // Sound Noise (dB)
-    data.soundNoise = payloadBuf.readSInt16LE(14) / 100;
+    data.soundNoise = payloadBuf.readInt16LE(14) / 100;
     // eTVOC (ppb)
-    data.etvoc = payloadBuf.readSInt16LE(16);
+    data.etvoc = payloadBuf.readInt16LE(16);
     // eCO2 (ppm)
-    data.eco2 = payloadBuf.readSInt16LE(18);
+    data.eco2 = payloadBuf.readInt16LE(18);
     // Discomfort Index (DI, Temperature-Humidity Index)
-    data.discomfortIndex = payloadBuf.readSInt16LE(20) / 100;
+    data.discomfortIndex = payloadBuf.readInt16LE(20) / 100;
     // Heat Stroke (degree Celsius)
-    data.heatStroke = payloadBuf.readSInt16LE(22) / 100;
+    data.heatStroke = payloadBuf.readInt16LE(22) / 100;
     // Vibration Status (`None`, `Vibration Detected`, or `Earthquake Detected`)
     data.vibrationStatus = this.resolveVibrationStatus(payloadBuf.readUInt8(24));
     // Spectral Intensity Value (SI Value in cm/s=kine, for small to medium scale vibration)
-    data.spectralIntensity = payloadBuf.readSInt16LE(25) / 10;
+    data.spectralIntensity = payloadBuf.readInt16LE(25) / 10;
     // Seismic Intensity Scale of Japan (for larger scale vibration like earthquake)
-    data.seismicIntensity = payloadBuf.readSInt16LE(29) / 1000;
+    data.seismicIntensity = payloadBuf.readInt16LE(29) / 1000;
   }
 
   resolveVibrationStatus(value) {
