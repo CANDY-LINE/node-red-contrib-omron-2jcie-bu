@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/CANDY-LINE/node-red-contrib-omron-2jcie-bu#readme",
   "keywords": [
+    "node-red",
     "OMRON",
     "2JCIE-BU",
     "Environment Sensor",
