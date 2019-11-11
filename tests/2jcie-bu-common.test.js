@@ -66,6 +66,26 @@ describe('Omron2jcieBuPacketParser', () => {
 			assert.closeTo(output.data.temperature, 18.33, 0.01);
 			assert.equal(output.data.eco2, 400);
     });
+
+		it('should parse the separated long sensor data packet from 2JCIE-BU in response to "Read" request', async () => {
+			const msg1 = Buffer.from(
+				'524236000121503729075c1d5b00fe4b0f004d1c0000900103196707000000',
+				'hex'
+			);
+			const msg2 = Buffer.from(
+				'00000000000000000000000000000000000000000000000000d632',
+				'hex'
+			);
+			const output1 = await parser.parseResponse(msg1);
+			assert.isFalse(output1.finished);
+			const output2 = await parser.parseResponse(msg2);
+			assert.isTrue(output2.finished);
+			assert.equal(output2.status, 'Read OK');
+			assert.equal(output2.statusCode, 0x01);
+			assert.equal(output2.address, 0x5021);
+			assert.closeTo(output2.data.temperature, 18.33, 0.01);
+			assert.equal(output2.data.eco2, 400);
+    });
   });
 });
 

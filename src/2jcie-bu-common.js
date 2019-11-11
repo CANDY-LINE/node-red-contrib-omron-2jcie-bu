@@ -150,34 +150,65 @@ export class Omron2jcieBuPacketBuilder {
 
 export class Omron2jcieBuPacketParser {
 
-  constructor() {
+  constructor(ttl) {
+    this.bufferArray = null;
+    this.expectedLength = 0;
+    this.lastBuffered = 0;
+    this.ttl = ttl;
+  }
+
+  reset() {
+    this.bufferArray = null;
+    this.expectedLength = 0;
+    this.lastBuffered = 0;
   }
 
   parseResponse(dataBuf) {
-    // See "Table 70 Common frame format" for the data frame format
-    if (!Array.isArray(dataBuf) && !(dataBuf instanceof Buffer)) {
-      if (dataBuf && dataBuf.type === 'Buffer' && Array.isArray(dataBuf.data)) {
-        dataBuf = Buffer.from(dataBuf.data);
-      } else {
-        throw new Error(`[FormatError] The passed data buffer must be either int array or Buffer.`);
+    if (this.expectedLength > 0 && this.ttl && (Date.now() - this.lastBuffered >= this.ttl)) {
+      this.reset();
+    }
+    if (this.expectedLength > 0) {
+      this.bufferArray.push(dataBuf);
+      this.lastBuffered = Date.now();
+    } else {
+      // See "Table 70 Common frame format" for the data frame format
+      if (!Array.isArray(dataBuf) && !(dataBuf instanceof Buffer)) {
+        if (dataBuf && dataBuf.type === 'Buffer' && Array.isArray(dataBuf.data)) {
+          dataBuf = Buffer.from(dataBuf.data);
+        } else {
+          throw new Error(`[FormatError] The passed data buffer must be either int array or Buffer.`);
+        }
       }
+      if (Array.isArray(dataBuf)) {
+        dataBuf = Buffer.from(dataBuf);
+      }
+      // Process header
+      if (dataBuf.readUInt16LE(0) !== HEADER) {
+        throw new Error(`[FormatError] Cannot parse the given data. Unsupported format.`);
+      }
+      this.expectedLength = dataBuf.readUInt16LE(2) + 4; // +4 => Header + CRC16
+      this.bufferArray = [dataBuf];
+      this.lastBuffered = Date.now();
     }
-    if (Array.isArray(dataBuf)) {
-      dataBuf = Buffer.from(dataBuf);
+    const dataBufLen = this.bufferArray.reduce((acc, cur) => acc + cur.length , 0);
+    if (dataBufLen === this.expectedLength) {
+      const msgBuf = Buffer.concat(this.bufferArray);
+      this.reset();
+      const crc16ActualIndex = msgBuf.length - 2;
+      const payloadBuf = msgBuf.slice(4, crc16ActualIndex);
+      const crc16Actual = msgBuf.readUInt16LE(crc16ActualIndex);
+      const crc16Expected = crc16(msgBuf.slice(0, crc16ActualIndex));
+      if (crc16Expected !== crc16Actual) {
+        throw new Error(`[FormatError] CRC16 Check Failed! Expected:0x${crc16Expected.toString(16)}, Actual:0x${crc16Actual.toString(16)}`);
+      }
+      const output = this.parsePayloadFrame(payloadBuf);
+      output.finished = true;
+      return output;
+    } else {
+      return {
+        finished: false
+      };
     }
-    // Process header
-    if (dataBuf.readUInt16LE(0) !== HEADER) {
-      throw new Error(`[FormatError] Cannot parse the given data. Unsupported format.`);
-    }
-    const crc16ActualIndex = dataBuf.length - 2;
-    const payloadBuf = dataBuf.slice(4, crc16ActualIndex);
-    const crc16Actual = dataBuf.readUInt16LE(crc16ActualIndex);
-    const crc16Expected = crc16(dataBuf.slice(0, crc16ActualIndex));
-    if (crc16Expected !== crc16Actual) {
-      throw new Error(`[FormatError] CRC16 Check Failed! Expected:0x${crc16Expected.toString(16)}, Actual:0x${crc16Actual.toString(16)}`);
-    }
-    const output = this.parsePayloadFrame(payloadBuf);
-    return output;
   }
 
   parsePayloadFrame(payloadBuf) {
