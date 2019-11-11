@@ -18,7 +18,6 @@
 /*jslint bitwise: true */
 
 import 'source-map-support/register';
-import { crc16 } from 'crc';
 
 const HEADER = 0x4252; // LE byte order
 const RESPONSE_STATUS = {
@@ -46,6 +45,21 @@ const DISPLAY_RULES = {
   'Sound Noise': 0x0006,
   'eTVOC': 0x0007,
   'Vibration': 0x0008 // SI value scales
+};
+
+const crc16 = (buf) => {
+  let register = 0xffff;
+  for (let i = 0; i < buf.length; i++) {
+    register ^= buf[i];
+    for (let b = 0; b < 8; b++) {
+      const lsb = register & 0x0001;
+      register = (register >> 1) & 0x7ffff; // 0b0111111111111111
+      if (lsb) {
+        register ^= 0xa001;
+      }
+    }
+  }
+  return register;
 };
 
 export class Omron2jcieBuPacketBuilder {

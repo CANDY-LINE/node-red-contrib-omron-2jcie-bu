@@ -31,14 +31,26 @@ describe('Omron2jcieBuPacketParser', () => {
 		sandbox = sandbox.restore();
 	});
   describe('#parseResponse()', () => {
-    it('should parse the error data packet from 2JCIE-BU in response to "Write" request', async () => {
+		it('should parse the error data packet from 2JCIE-BU in response to "Read" request', async () => {
 			const output = await parser.parseResponse(Buffer.from(
-				'52420600812150016371',
+				'5242060081215001237A',
 				'hex'
 			));
 			console.log(output);
 			assert.equal('Read Error', output.status);
 			assert.equal(0x81, output.statusCode);
+			assert.equal(0x5021, output.address);
+			assert.equal('CRC Error', output.error);
+			assert.equal(0x01, output.errorCode);
+    });
+    it('should parse the error data packet from 2JCIE-BU in response to "Write" request', async () => {
+			const output = await parser.parseResponse(Buffer.from(
+				'5242060082215001233E',
+				'hex'
+			));
+			console.log(output);
+			assert.equal('Write Error', output.status);
+			assert.equal(0x82, output.statusCode);
 			assert.equal(0x5021, output.address);
 			assert.equal('CRC Error', output.error);
 			assert.equal(0x01, output.errorCode);
@@ -59,19 +71,19 @@ describe('Omron2jcieBuPacketBuilder', () => {
   describe('#buildReadLatestDataLongRequest()', () => {
     it('should build a Read-Latest-Data-Long request', async () => {
 			const output = await builder.buildReadLatestDataLongRequest();
-			assert.equal('52420500012150f94b', output.toString('hex'));
+			assert.equal('52420500012150e24b', output.toString('hex'));
     });
   });
 	describe('#buildReadMountingOrientationRequest()', () => {
     it('should build a Read-Mounting-Orientation request', async () => {
 			const output = await builder.buildReadMountingOrientationRequest();
-			assert.equal('52420500010254e1b8', output.toString('hex'));
+			assert.equal('52420500010254fab8', output.toString('hex'));
     });
   });
 	describe('#buildReadDeviceInformationRequest()', () => {
     it('should build a Read-Device-Information request', async () => {
 			const output = await builder.buildReadDeviceInformationRequest();
-			assert.equal('52420500010a18e78d', output.toString('hex'));
+			assert.equal('52420500010a18fc8d', output.toString('hex'));
     });
   });
 	describe('#buildWriteLEDSettingsRequest()', () => {
@@ -79,7 +91,7 @@ describe('Omron2jcieBuPacketBuilder', () => {
 			const output = await builder.buildWriteLEDSettingsRequest({
 				displayRule: 'Temperature'
 			});
-			assert.equal('52420a000211510200000000b3c7', output.toString('hex'));
+			assert.equal('52420a000211510200000000d7c5', output.toString('hex'));
     });
 
 		it('should build a Write-LED-Setting request with the rule: "ON"', async () => {
@@ -87,7 +99,7 @@ describe('Omron2jcieBuPacketBuilder', () => {
 				displayRule: 'ON',
 				color: '#0D58C1'
 			});
-			assert.equal('52420a0002115101000d58c19c54', output.toString('hex'));
+			assert.equal('52420a0002115101000d58c1f856', output.toString('hex'));
     });
   });
 });
