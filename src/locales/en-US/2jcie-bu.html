@@ -118,7 +118,7 @@ You can choose the output message format from the following alternatives.
         <dd>Humidity value in <i>%</i>.</dd>
         <dt>illuminance</dt>
         <dd>Illuminance value in <i>lux</i>.</dd>
-        <dt>barometicPressure</dt>
+        <dt>barometricPressure</dt>
         <dd>Barometric Pressure value in <i>hPa</i>.</dd>
         <dt>soundNoise</dt>
         <dd>Sound Noise value in <i>dB</i>.</dd>
@@ -224,14 +224,14 @@ You can choose the output message format from the following alternatives.
     One of the following command names.
     <dl>
       <dt><code>getLatestSensorData</code></dt>
-      <dd>This command allowed you to get all sensor data information except the mounting position.</dd>
+      <dd>This command allows you to get all sensor data information except the mounting position.</dd>
       <dt><code>getMountingOrientation</code></dt>
-      <dd>This command allowed you to get the mounting position.</dd>
+      <dd>This command allows you to get the mounting position.</dd>
       <dt><code>getDeviceInformation</code></dt>
-      <dd>This command allowed you to get the sensor device information.</dd>
+      <dd>This command allows you to get the sensor device information.</dd>
       <dt><code>setLED</code></dt>
       <dd>
-        This command allowed you to set the LED color or the LED color display rule.<br />
+        This command allows you to set the LED color or the LED color display rule.<br />
         With this topic, you have to provide an object in <code>msg.payload</code>. See below.
       </dd>
     </dl>
@@ -254,8 +254,8 @@ You can choose the output message format from the following alternatives.
           <dd>The sensor device will change the color depending on the current humidity.</dd>
           <dt><code>Illuminance</code></dt>
           <dd>The sensor device will change the color depending on the current illuminance.</dd>
-          <dt><code>Barometic Pressure</code></dt>
-          <dd>The sensor device will change the color depending on the current barometic pressure.</dd>
+          <dt><code>Barometric Pressure</code></dt>
+          <dd>The sensor device will change the color depending on the current barometric pressure.</dd>
           <dt><code>Sound Noise</code></dt>
           <dd>The sensor device will change the color depending on the current sound noise.</dd>
           <dt><code>eTVOC</code></dt>
