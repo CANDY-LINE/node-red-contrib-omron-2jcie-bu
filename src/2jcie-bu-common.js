@@ -41,7 +41,7 @@ const DISPLAY_RULES = {
   'Temperature': 0x0002,
   'Humidity': 0x0003,
   'Illuminance': 0x0004,
-  'Barometic Pressure': 0x0005,
+  'Barometric Pressure': 0x0005,
   'Sound Noise': 0x0006,
   'eTVOC': 0x0007,
   'Vibration': 0x0008 // SI value scales
@@ -265,7 +265,7 @@ export class Omron2jcieBuPacketParser {
     // Illuminance (lux)
     data.illuminance = payloadBuf.readInt16LE(8);
     // Barometric Pressure (hPa)
-    data.barometicPressure = payloadBuf.readInt32LE(10) / 1000;
+    data.barometricPressure = payloadBuf.readInt32LE(10) / 1000;
     // Sound Noise (dB)
     data.soundNoise = payloadBuf.readInt16LE(14) / 100;
     // eTVOC (ppb)
